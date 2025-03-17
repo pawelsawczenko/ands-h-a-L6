@@ -46,8 +46,6 @@ class DataHandler {
     const filtered = this._data.filter((post) => post.id === id);
     return filtered.length ? filtered[0] : `Post with id ${id} doesn't exist`;
   }
-
-  _noData() {}
 }
 
 // testing
@@ -55,8 +53,12 @@ const dataHandler = new DataHandler();
 
 console.log(dataHandler.listPosts());
 
-let res = await dataHandler.fetchPost();
-console.log(res);
+try {
+  let res = await dataHandler.fetchPost();
+  console.log(res);
+} catch (error) {
+  console.error(error);
+}
 
 console.log(dataHandler._data);
 
