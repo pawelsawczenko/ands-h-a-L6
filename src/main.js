@@ -1,24 +1,66 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+// -- H / A - L6
+//
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const API = "https://jsonplaceholder.typicode.com/posts";
 
-setupCounter(document.querySelector('#counter'))
+class DataHandler {
+  _data = null;
+
+  async fetchPost() {
+    try {
+      let responce = await fetch(API);
+
+      if (!responce.ok) {
+        throw new Error(responce.status);
+      }
+
+      this._data = await responce.json();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      return Promise.resolve("Fetching is done.");
+    }
+  }
+
+  clearPosts() {
+    this._data = null;
+  }
+
+  listPosts() {
+    if (!this._data) return "No data. Fetch posts first";
+
+    return this._data.toSorted((a, b) => {
+      if (a.title < b.title) {
+        return -1;
+      }
+      if (a.title > b.title) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  getPosts(id) {
+    if (!this._data) return "No data. Fetch posts first";
+
+    const filtered = this._data.filter((post) => post.id === id);
+    return filtered.length ? filtered[0] : `Post with id ${id} doesn't exist`;
+  }
+
+  _noData() {}
+}
+
+// testing
+const dataHandler = new DataHandler();
+
+console.log(dataHandler.listPosts());
+
+let res = await dataHandler.fetchPost();
+console.log(res);
+
+console.log(dataHandler._data);
+
+console.log(dataHandler.listPosts());
+
+console.log(dataHandler.getPosts(72));
+console.log(dataHandler.getPosts("someId"));
