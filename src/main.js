@@ -18,7 +18,7 @@ class DataHandler {
     } catch (error) {
       console.error(error);
     } finally {
-      return Promise.resolve("Fetching is done.");
+      return "Fetching is done.";
     }
   }
 
@@ -29,22 +29,14 @@ class DataHandler {
   listPosts() {
     if (!this._data) return "No data. Fetch posts first";
 
-    return this._data.toSorted((a, b) => {
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
+    return this._data.toSorted((a, b) => a.title.localeCompare(b.title));
   }
 
   getPosts(id) {
     if (!this._data) return "No data. Fetch posts first";
 
-    const filtered = this._data.filter((post) => post.id === id);
-    return filtered.length ? filtered[0] : `Post with id ${id} doesn't exist`;
+    const filtered = this._data.find((post) => post.id === id);
+    return filtered ? filtered : null;
   }
 }
 
